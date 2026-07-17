@@ -43,7 +43,7 @@ const ProductSchema: Schema = new Schema({
   image: { type: String, required: true },
   images: [{ type: String }],
   price: { type: Number, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date, required: false, default: Date.now },
   rating: { type: Number, required: true, default: 0 },
   location: { type: String, required: true },
   specifications: [SpecificationSchema],

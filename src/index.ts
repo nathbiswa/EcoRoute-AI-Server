@@ -14,31 +14,43 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+}));
 app.use(express.json());
 
 // ======= ROUTES =======   
-app.get('/api/products', async (req: Request, res: Response) => {
-    try {
-        const products = await Product.find({});
-        res.json(products);
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        res.status(500).json({ error: "Failed to fetch products" });
-    }
-});
+import productRoutes from './routes/productRoutes';
+import Product from './models/Product';
 
-app.get('/api/products/:id', async (req: Request, res: Response): Promise<void> => {
+app.use('/api/products', productRoutes);
+
+// ======= PUBLIC TEST ROUTE (no JWT) =======
+// Use this to verify MongoDB saves work. Remove after debugging.
+app.post('/api/test-add', async (req: Request, res: Response): Promise<void> => {
     try {
-        const product = await Product.findById(req.params.id);
-        if (!product) {
-            res.status(404).json({ error: "Product not found" });
-            return;
-        }
-        res.json(product);
-    } catch (error) {
-        console.error("Error fetching product details:", error);
-        res.status(500).json({ error: "Failed to fetch product details" });
+        const { title, description, price, location, image } = req.body;
+        const doc = new Product({
+            title: title || 'Test Item',
+            description: description || 'Test description',
+            price: Number(price) || 100,
+            date: new Date(),
+            location: location || 'Test City',
+            image: image || 'https://via.placeholder.com/400',
+            rating: 5,
+            images: [image || 'https://via.placeholder.com/400'],
+            reviews: [],
+            specifications: []
+        });
+        const saved = await doc.save();
+        console.log('✅ Test item saved:', saved._id);
+        res.status(201).json({ success: true, id: saved._id, item: saved });
+    } catch (error: any) {
+        console.error('❌ Test save failed:', error);
+        res.status(500).json({ error: error.message, details: error });
     }
 });
 
