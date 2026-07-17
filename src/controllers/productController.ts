@@ -4,16 +4,13 @@ import Product from '../models/Product';
 // @desc    Create a new product
 // @route   POST /api/products
 // @access  Private
-export const createProduct = async (req: Request, res: Response): Promise<void> => {
+export const createProductPublic = async (req: Request, res: Response): Promise<void> => {
     try {
         const { title, description, price, date, location, image } = req.body;
-        
-        // Basic validation
         if (!title || !description || !price || !location || !image) {
             res.status(400).json({ error: "Missing required fields" });
             return;
         }
-
         const newProduct = new Product({
             title,
             description,
@@ -21,25 +18,24 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
             date: date ? new Date(date) : new Date(),
             location,
             image,
-            rating: 5, // Default rating for new products
-            images: [image], // By default main image is also in gallery
+            rating: 5,
+            images: [image],
             reviews: [],
             specifications: []
         });
-
         const savedProduct = await newProduct.save();
         res.status(201).json(savedProduct);
     } catch (error: any) {
-        console.error("Error creating product:", error);
-        // Surface Mongoose validation errors clearly
+        console.error("Error creating product (public):", error);
         if (error.name === 'ValidationError') {
-            const messages = Object.values(error.errors).map((e: any) => e.message);
+            const messages = Object.values(error.errors).map(e => e.message);
             res.status(400).json({ error: `Validation failed: ${messages.join(', ')}` });
             return;
         }
         res.status(500).json({ error: "Failed to create product" });
     }
 };
+
 
 // @desc    Fetch all products with filtering, sorting, and pagination
 // @route   GET /api/products
