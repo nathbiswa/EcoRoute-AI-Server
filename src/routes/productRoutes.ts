@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyToken } from '../middleware/authMiddleware';
-import { createProductPublic, getProducts, getProductById } from '../controllers/productController';
+import { createProductPublic, getProducts, getProductById, deleteProduct } from '../controllers/productController';
 
 const router = express.Router();
 
@@ -19,5 +19,10 @@ router.get('/', getProducts);
 // @desc    Get single product by ID
 // @access  Public
 router.get('/:id', getProductById);
+
+// @route   DELETE /api/products/:id
+// @desc    Delete a single product by ID
+// @access  Public
+router.delete('/:id', deleteProduct);
 
 export default router;

@@ -24,7 +24,6 @@ app.use(express.json());
 
 // ======= ROUTES =======   
 import productRoutes from './routes/productRoutes';
-import Product from './models/Product';
 
 app.use('/api/products', productRoutes);
 
