@@ -28,7 +28,7 @@ export const createProductPublic = async (req: Request, res: Response): Promise<
     } catch (error: any) {
         console.error("Error creating product (public):", error);
         if (error.name === 'ValidationError') {
-            const messages = Object.values(error.errors).map(e => e.message);
+            const messages = Object.values(error.errors).map((e: any) => (e as { message: string }).message);
             res.status(400).json({ error: `Validation failed: ${messages.join(', ')}` });
             return;
         }
