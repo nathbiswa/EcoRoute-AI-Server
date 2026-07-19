@@ -24,8 +24,10 @@ app.use(express.json());
 
 // ======= ROUTES =======   
 import productRoutes from './routes/productRoutes';
+import aiRoutes from './routes/aiRoutes';
 
 app.use('/api/products', productRoutes);
+app.use('/api/ai', aiRoutes);
 
 // ======= PUBLIC TEST ROUTE (no JWT) =======
 // Use this to verify MongoDB saves work. Remove after debugging.
