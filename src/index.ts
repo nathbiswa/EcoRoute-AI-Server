@@ -14,8 +14,22 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middleware
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    // Production Vercel URL — set CLIENT_URL in server .env
+    ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
+];
+
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (e.g., Postman, curl)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error(`CORS: Origin ${origin} not allowed`));
+        }
+    },
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
